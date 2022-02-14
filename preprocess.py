@@ -52,8 +52,7 @@ class Preprocess():
 
         # Now you can get any perturbed image y = v(x+\delta x)
 
-        xlong_new = xlong + alpha * \
-            np.random.rand(xlong.shape[0], xlong.shape[1])
+        xlong_new = xlong + alpha * np.random.rand(xlong.shape[0], xlong.shape[1])
         # Projector input - Attacked #
         x_new = np.zeros(x.shape)
         x_new[:, :, 0] = xlong_new[:, 0].reshape(ss[0], ss[1])
@@ -66,7 +65,7 @@ class Preprocess():
         y_new[:, :, 0] = ylong_new[:, 0].reshape(ss[0], ss[1])
         y_new[:, :, 1] = ylong_new[:, 1].reshape(ss[0], ss[1])
         y_new[:, :, 2] = ylong_new[:, 2].reshape(ss[0], ss[1])
-        
+
         y = cv2.convertScaleAbs(y, alpha=(255.0))
         x = cv2.convertScaleAbs(x, alpha=(255.0))
         y_new = cv2.convertScaleAbs(y_new, alpha=(255.0))
