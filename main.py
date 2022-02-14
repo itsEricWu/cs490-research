@@ -91,20 +91,17 @@ def main():
     # Decide whether to use GPU or CPU
 
     print("CUDA Available: ", torch.cuda.is_available())
-    device = torch.device("cuda" if (
-        use_cuda and torch.cuda.is_available()) else "cpu")
+    device = torch.device("cuda" if (use_cuda and torch.cuda.is_available()) else "cpu")
 
     # Load the pretrained model
     model = TrafficNet()
     model = model.to(device)
-    model.load_state_dict(torch.load(
-        'Traffic_sign_new/Checkpoints/epoch_999.pth'))
+    model.load_state_dict(torch.load('Traffic_sign_new/Checkpoints/epoch_999.pth'))
 
     model.eval()
 
     g = os.walk(r"./Test")
-    df = pd.DataFrame(columns=["original image name", "actual label for processed",
-                      "predicted label for processed", "v", "alpha"])
+    df = pd.DataFrame(columns=["original image name", "actual label for processed", "predicted label for processed", "v", "alpha"])
     for path, dir_list, file_list in g:
         for file_name in file_list:
             path_file = os.path.join(path, file_name)
