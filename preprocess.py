@@ -66,6 +66,11 @@ class Preprocess():
         y_new[:, :, 0] = ylong_new[:, 0].reshape(ss[0], ss[1])
         y_new[:, :, 1] = ylong_new[:, 1].reshape(ss[0], ss[1])
         y_new[:, :, 2] = ylong_new[:, 2].reshape(ss[0], ss[1])
+        
+        y = cv2.convertScaleAbs(y, alpha=(255.0))
+        x = cv2.convertScaleAbs(x, alpha=(255.0))
+        y_new = cv2.convertScaleAbs(y_new, alpha=(255.0))
+        x_new = cv2.convertScaleAbs(x_new, alpha=(255.0))
 
         # Captured original, Projector original, Captured attracked, Projector attacked
         return y, x, y_new, x_new
