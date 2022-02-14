@@ -66,8 +66,8 @@ def main():
     v = np.array([[1.0000, 0.0595, -0.1429],
                   [0.0588, 1.0000, -0.1324],
                   [-0.2277, -0.0297, 1.0000]])
-    epsilons = [0, .05, .1, .15, .2, .25, .3]
-    alpha = epsilons[1]
+    epsilons = [.05, .1, .15, .2, .25, .3]
+    # alpha = epsilons[1]
     # v = np.array([[1,1,1],
     #            [1,1,1],
     #            [1,1,1]])
@@ -111,20 +111,20 @@ def main():
             original_label = path.split("/")[-1]
             y, x, y_new, x_new = Preprocess.preprocess_image(
                 path_file, v, alpha)
+            for alpha in epsilons:
+                output_label_y = get_predicted_label(y, device, model)
+                output_label_x = get_predicted_label(x, device, model)
+                output_label_y_new = get_predicted_label(y_new, device, model)
+                output_label_x_new = get_predicted_label(x_new, device, model)
 
-            output_label_y = get_predicted_label(y, device, model)
-            output_label_x = get_predicted_label(x, device, model)
-            output_label_y_new = get_predicted_label(y_new, device, model)
-            output_label_x_new = get_predicted_label(x_new, device, model)
-
-            df.loc[len(df.index)] = [file_name, original_label,
-                                     output_label_y, np.identity(3), 0]
-            df.loc[len(df.index)] = [file_name, original_label,
-                                     output_label_y_new, np.identity(3), alpha]
-            df.loc[len(df.index)] = [file_name,
-                                     original_label, output_label_x, v, 0]
-            df.loc[len(df.index)] = [file_name, original_label,
-                                     output_label_x_new, v, alpha]
+                df.loc[len(df.index)] = [file_name, original_label,
+                                        output_label_y, np.identity(3), 0]
+                df.loc[len(df.index)] = [file_name, original_label,
+                                        output_label_y_new, np.identity(3), alpha]
+                df.loc[len(df.index)] = [file_name,
+                                        original_label, output_label_x, v, 0]
+                df.loc[len(df.index)] = [file_name, original_label,
+                                        output_label_x_new, v, alpha]
             # print(f'output_label_y: {output_label_y}')
             # print(f'output_label_x: {output_label_x}')
             # print(f'output_label_y_new: {output_label_y_new}')
