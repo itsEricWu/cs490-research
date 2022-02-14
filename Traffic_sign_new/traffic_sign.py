@@ -60,8 +60,8 @@ class TrafficNet(nn.Module):
         xs = xs.view(-1, 10 * 4 * 4)
         theta = self.fc_loc(xs)
         theta = theta.view(-1, 2, 3)
-        grid = F.affine_grid(theta, x.size(), align_corners=True)
-        x = F.grid_sample(x, grid, align_corners=True)
+        grid = F.affine_grid(theta, x.size())
+        x = F.grid_sample(x, grid)
         return x
 
     def forward(self, x):
@@ -126,7 +126,7 @@ model.eval()
 
 # Load the image
 image = np.zeros((3,32,32))
-temp = cv.imread('0.ppm')
+temp = cv.imread('ISO_400.png')
 temp = cv.resize(temp,(32,32))
 temp = temp[0:32,0:32,:]
 
@@ -156,6 +156,6 @@ data.requires_grad = False
 #Classify the image
 output = model(data)
 #print(torch.argmax(output))
+
 #Print output
-print(output)
 print(torch.argmax(output))
