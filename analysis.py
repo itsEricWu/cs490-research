@@ -8,7 +8,7 @@ out_df = pd.DataFrame(columns=["type", "correct", "total", "accuracy", "classfic
 original_count = 0
 correct_count = 0
 epsilons = [0, .05, .1, .2, .4, .8]
-classfication = list(range(0, 18))
+classfication = list(range(0, 19))
 type = ["original", "attacked", "v matrix", "attacked v matrix"]
 
 # creating rows
@@ -44,4 +44,4 @@ for index, row in out_df.iterrows():
     print(row)
     row["accuracy"] = row["correct"] / row["total"]
 print(out_df)
-pickle.dump(df, open("analysis", "wb"))
+pickle.dump(out_df, open("analysis", "wb"))
