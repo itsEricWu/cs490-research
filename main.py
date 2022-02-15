@@ -114,9 +114,9 @@ def main():
                 output_label_x_new = get_predicted_label(x_new, device, model)
 
                 # df.loc[len(df.index)] = [file_name, int(original_label), int(output_label_y), np.identity(3), 0]
-                df.loc[len(df.index)] = [file_name, int(original_label), int(output_label_y_new), np.identity(3), alpha]
+                df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_y_new), np.identity(3), alpha]
                 # df.loc[len(df.index)] = [file_name, int(original_label), int(output_label_x), v, 0]
-                df.loc[len(df.index)] = [file_name, int(original_label), int(output_label_x_new), v, alpha]
+                df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_x_new), v, alpha]
             # print(f'output_label_y: {output_label_y}')
             # print(f'output_label_x: {output_label_x}')
             # print(f'output_label_y_new: {output_label_y_new}')
