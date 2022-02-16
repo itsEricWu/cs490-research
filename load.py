@@ -10,6 +10,7 @@ import numpy as np
 # print(analysis[(analysis["classfication"] == 0) & (analysis["alpha"] == 0)])
 
 result = pickle.load(open("generated/changed_v_result", "rb"))
-print(result[(result["alpha"] == 0.2) & (result["condition number"] == -1)])
-print(result[(result["actual label for processed"] == result["predicted label for processed"])
-      & (result["alpha"] == 0.2) & (result["condition number"] == -1)])
+print(result["predicted label for processed"])
+# print(result[(result["alpha"] == 0.2) & (result["condition number"] == -1)])
+# print(result[(result["actual label for processed"] == result["predicted label for processed"])
+#       & (result["alpha"] == 0.2) & (result["condition number"] == -1)])
