@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
+import pickle
 
 
 class Preprocess():
@@ -98,4 +99,6 @@ class Preprocess():
             V = u @ s @ v
             V_list.append(V)
         V_list.append(np.identity(3))
+        pickle.dump(V_list, open("V_list", "wb"))
+        pickle.dump(eps_list, open("eps_list", "wb"))
         return V_list
