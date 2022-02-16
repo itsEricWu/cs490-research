@@ -81,3 +81,21 @@ class Preprocess():
         # cv2.imwrite(filename, matrix) # does not work
         plt.imshow(matrix)
         plt.savefig(filename)
+
+    # generate v matrix lists
+    # num: number of v matricies without the identity matrix
+    # identity: true for adding an additional identity matrix
+    def generate_v_matrix(num=10, identity=True):
+        np.random.seed(0)
+        eps_list = np.logspace(0, 3, num)
+        V_list = []
+        for eps in eps_list:
+            a = np.random.normal(0, 1, size=(3, 3))
+            C = eps
+            u, s, v = np.linalg.svd(a, full_matrices=True)
+            s = s[0] * (1 - ((C - 1) / C) * (s[0] - s) / (s[0] - s[-1]))
+            s = np.diag(s)
+            V = u @ s @ v
+            V_list.append(V)
+        V_list.append(np.identity(3))
+        return V_list

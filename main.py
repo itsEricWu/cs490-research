@@ -63,16 +63,15 @@ def get_predicted_label(img, device, model):  # numpy array get from the previou
 
 
 def main():
-    v = np.array([[1.0000, 0.0595, -0.1429],
-                  [0.0588, 1.0000, -0.1324],
-                  [-0.2277, -0.0297, 1.0000]])
+    v_list = Preprocess.generate_v_matrix(10, True)
+    # v = np.array([[1.0000, 0.0595, -0.1429],
+    #               [0.0588, 1.0000, -0.1324],
+    #               [-0.2277, -0.0297, 1.0000]])
     epsilons = [0, .05, .1, .2, .4, .8]
     # alpha = epsilons[1]
     # v = np.array([[1,1,1],
     #            [1,1,1],
     #            [1,1,1]])
-    img_filename = "Test/0/165.ppm"
-
     # show_np_array_as_jpg(y, 1)
     # show_np_array_as_jpg(x, 2)
     # show_np_array_as_jpg(y_new, 3)
@@ -101,27 +100,29 @@ def main():
     model.eval()
 
     g = os.walk(r"./Test")
-    df = pd.DataFrame(columns=["original image name", "actual label for processed", "predicted label for processed", "v", "alpha"])
+    df = pd.DataFrame(columns=["original image name", "actual label for processed",
+                      "predicted label for processed", "v", "alpha"])
     for path, dir_list, file_list in g:
         for file_name in file_list:
             path_file = os.path.join(path, file_name)
             original_label = path.split("/")[-1]
-            for alpha in epsilons:
-                y, x, y_new, x_new = Preprocess.preprocess_image(path_file, v, alpha)
-                # output_label_y = get_predicted_label(y, device, model)
-                # output_label_x = get_predicted_label(x, device, model)
-                output_label_y_new = get_predicted_label(y_new, device, model)
-                output_label_x_new = get_predicted_label(x_new, device, model)
+            for v in v_list:
+                for alpha in epsilons:
+                    y, x, y_new, x_new = Preprocess.preprocess_image(path_file, v, alpha)
+                    # output_label_y = get_predicted_label(y, device, model)
+                    # output_label_x = get_predicted_label(x, device, model)
+                    # output_label_y_new = get_predicted_label(y_new, device, model)
+                    output_label_x_new = get_predicted_label(x_new, device, model)
 
-                # df.loc[len(df.index)] = [file_name, int(original_label), int(output_label_y), np.identity(3), 0]
-                df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_y_new), np.identity(3), alpha]
-                # df.loc[len(df.index)] = [file_name, int(original_label), int(output_label_x), v, 0]
-                df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_x_new), v, alpha]
-            # print(f'output_label_y: {output_label_y}')
-            # print(f'output_label_x: {output_label_x}')
-            # print(f'output_label_y_new: {output_label_y_new}')
-            # print(f'output_label_x_new: {output_label_x_new}')
-    pickle.dump(df, open("result", "wb"))
+                    # df.loc[len(df.index)] = [file_name, int(original_label), int(output_label_y), np.identity(3), 0]
+                    # df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_y_new), np.identity(3), alpha]
+                    # df.loc[len(df.index)] = [file_name, int(original_label), int(output_label_x), v, 0]
+                    df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_x_new), v, alpha]
+                # print(f'output_label_y: {output_label_y}')
+                # print(f'output_label_x: {output_label_x}')
+                # print(f'output_label_y_new: {output_label_y_new}')
+                # print(f'output_label_x_new: {output_label_x_new}')
+    pickle.dump(df, open("changed_v_result", "wb"))
 
 
 main()
