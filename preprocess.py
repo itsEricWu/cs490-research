@@ -26,7 +26,7 @@ class Preprocess():
         # some scenes are not possible at all.
 
         img = cv2.imread(img_filename)  # numpy array
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         # Captured Image - original #
         y = Preprocess.im2double(img)  # Convert to normalized floating point
@@ -53,7 +53,7 @@ class Preprocess():
 
         # Now you can get any perturbed image y = v(x+\delta x)
 
-        xlong_new = xlong + alpha * np.random.rand(xlong.shape[0], xlong.shape[1])
+        xlong_new = xlong + alpha * np.random.normal(0, 1, (xlong.shape[0], xlong.shape[1]))
         # Projector input - Attacked #
         x_new = np.zeros(x.shape)
         x_new[:, :, 0] = xlong_new[:, 0].reshape(ss[0], ss[1])
