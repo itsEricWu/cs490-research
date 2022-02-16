@@ -46,59 +46,78 @@ class Preprocess():
         xlong[xlong < 0] = 0
 
         # Projector input - original #
-        x = np.zeros(y.shape)
-        x[:, :, 0] = xlong[:, 0].reshape(ss[0], ss[1])
-        x[:, :, 1] = xlong[:, 1].reshape(ss[0], ss[1])
-        x[:, :, 2] = xlong[:, 2].reshape(ss[0], ss[1])
+        # x = np.zeros(y.shape)
+        # x[:, :, 0] = xlong[:, 0].reshape(ss[0], ss[1])
+        # x[:, :, 1] = xlong[:, 1].reshape(ss[0], ss[1])
+        # x[:, :, 2] = xlong[:, 2].reshape(ss[0], ss[1])
 
         # Now you can get any perturbed image y = v(x+\delta x)
 
         xlong_new = xlong + alpha * np.random.normal(0, 1, (xlong.shape[0], xlong.shape[1]))
         # Projector input - Attacked #
-        x_new = np.zeros(x.shape)
+        x_new = np.zeros(y.shape)
+        # x_new = np.zeros(x.shape)
         x_new[:, :, 0] = xlong_new[:, 0].reshape(ss[0], ss[1])
         x_new[:, :, 1] = xlong_new[:, 1].reshape(ss[0], ss[1])
         x_new[:, :, 2] = xlong_new[:, 2].reshape(ss[0], ss[1])
 
-        ylong_new = np.transpose(np.matmul(v, np.transpose(xlong_new)))
-        # Captured Image - Attacked #
-        y_new = np.zeros(y.shape)
-        y_new[:, :, 0] = ylong_new[:, 0].reshape(ss[0], ss[1])
-        y_new[:, :, 1] = ylong_new[:, 1].reshape(ss[0], ss[1])
-        y_new[:, :, 2] = ylong_new[:, 2].reshape(ss[0], ss[1])
+        # ylong_new = np.transpose(np.matmul(v, np.transpose(xlong_new)))
+        # # Captured Image - Attacked #
+        # y_new = np.zeros(y.shape)
+        # y_new[:, :, 0] = ylong_new[:, 0].reshape(ss[0], ss[1])
+        # y_new[:, :, 1] = ylong_new[:, 1].reshape(ss[0], ss[1])
+        # y_new[:, :, 2] = ylong_new[:, 2].reshape(ss[0], ss[1])
 
-        y = cv2.convertScaleAbs(y, alpha=(255.0))
-        x = cv2.convertScaleAbs(x, alpha=(255.0))
-        y_new = cv2.convertScaleAbs(y_new, alpha=(255.0))
+        # y = cv2.convertScaleAbs(y, alpha=(255.0))
+        # x = cv2.convertScaleAbs(x, alpha=(255.0))
+        # y_new = cv2.convertScaleAbs(y_new, alpha=(255.0))
         x_new = cv2.convertScaleAbs(x_new, alpha=(255.0))
 
         # Captured original, Projector original, Captured attracked, Projector attacked
-        return y, x, y_new, x_new
+        return x_new
+        # return y, x, y_new, x_new
 
     # , original_filename, actual_label, v_number, n_number):
     def show_np_array_as_jpg(matrix, number):
+
         # filename = "/home/zhan3447/CS490_DSC/jpg/{actual_label}/v{v_number}/n{n_number}/{original_filename}"
         filename = f"show{number}.jpg"
         # cv2.imwrite(filename, matrix) # does not work
         plt.imshow(matrix)
         plt.savefig(filename)
 
-    # generate v matrix lists
-    # num: number of v matricies without the identity matrix
-    # identity: true for adding an additional identity matrix
-    def generate_v_matrix(num=10, identity=True):
+
+    def generate_v_matrix(num_condition=10, num_matrix=10, identity=True):
+        """generate v matrix and condition number lists. It also saves two lists as files for future reference
+
+        Args:
+            num_condition (int, optional): number of condition numbers. Defaults to 10.
+            num_matrix (int, optional): number of v matricies with each condition number. Defaults to 10.
+            identity (bool, optional): true for adding an additional identity matrix. condition number for identity matrix will be -1. Defaults to True.
+
+        Returns:
+            V_list: v matrix list
+            condition_list: condition number list
+        """
+
         np.random.seed(0)
-        eps_list = np.logspace(0, 3, num)
+        eps_list = np.logspace(0, 3, num_condition)
         V_list = []
+        condition_list = []
         for eps in eps_list:
-            a = np.random.normal(0, 1, size=(3, 3))
-            C = eps
-            u, s, v = np.linalg.svd(a, full_matrices=True)
-            s = s[0] * (1 - ((C - 1) / C) * (s[0] - s) / (s[0] - s[-1]))
-            s = np.diag(s)
-            V = u @ s @ v
-            V_list.append(V)
-        V_list.append(np.identity(3))
-        pickle.dump(V_list, open("V_list", "wb"))
-        pickle.dump(eps_list, open("eps_list", "wb"))
-        return V_list
+            for i in range(0, num_matrix):
+                a = np.random.normal(0, 1, size=(3, 3))
+                C = eps
+                u, s, v = np.linalg.svd(a, full_matrices=True)
+                s = s[0] * (1 - ((C - 1) / C) * (s[0] - s) / (s[0] - s[-1]))
+                s = np.diag(s)
+                V = u @ s @ v
+                V_list.append(V)
+                condition_list.append(eps)
+        if identity:
+            V_list.append(np.identity(3))
+            condition_list.append(-1)
+        pickle.dump(V_list, open("generated/V_list", "wb"))
+        pickle.dump(condition_list, open("generated/condition_list", "wb"))
+        return V_list, condition_list
+

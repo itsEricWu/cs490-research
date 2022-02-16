@@ -63,11 +63,12 @@ def get_predicted_label(img, device, model):  # numpy array get from the previou
 
 
 def main():
-    v_list = Preprocess.generate_v_matrix(10, True)
+    v_list, condition_list = Preprocess.generate_v_matrix(num_condition=10, num_matrix=10, identity=True)
     # v = np.array([[1.0000, 0.0595, -0.1429],
     #               [0.0588, 1.0000, -0.1324],
     #               [-0.2277, -0.0297, 1.0000]])
-    epsilons = [0, .05, .1, .2, .4, .8]
+    epsilons = [0, 0.05, 0.1, 0.15, 0.2]
+    pickle.dump(epsilons, open("generated/epsilons", "wb"))
     # alpha = epsilons[1]
     # v = np.array([[1,1,1],
     #            [1,1,1],
@@ -89,7 +90,7 @@ def main():
     use_cuda = True
     # Decide whether to use GPU or CPU
 
-    print("CUDA Available: ", torch.cuda.is_available())
+    # print("CUDA Available: ", torch.cuda.is_available())
     device = torch.device("cuda" if (use_cuda and torch.cuda.is_available()) else "cpu")
 
     # Load the pretrained model
@@ -100,15 +101,17 @@ def main():
     model.eval()
 
     g = os.walk(r"./Test")
+    # g = os.walk(r"./Test/0")
     df = pd.DataFrame(columns=["original image name", "actual label for processed",
-                      "predicted label for processed", "v", "alpha"])
+                      "predicted label for processed", "v", "alpha", "condition number"])
     for path, dir_list, file_list in g:
         for file_name in file_list:
             path_file = os.path.join(path, file_name)
             original_label = path.split("/")[-1]
-            for v in v_list:
+            for v, con_num in zip(v_list, condition_list):
                 for alpha in epsilons:
-                    y, x, y_new, x_new = Preprocess.preprocess_image(path_file, v, alpha)
+                    x_new = Preprocess.preprocess_image(path_file, v, alpha)
+                    # y, x, y_new, x_new = Preprocess.preprocess_image(path_file, v, alpha)
                     # output_label_y = get_predicted_label(y, device, model)
                     # output_label_x = get_predicted_label(x, device, model)
                     # output_label_y_new = get_predicted_label(y_new, device, model)
@@ -117,12 +120,12 @@ def main():
                     # df.loc[len(df.index)] = [file_name, int(original_label), int(output_label_y), np.identity(3), 0]
                     # df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_y_new), np.identity(3), alpha]
                     # df.loc[len(df.index)] = [file_name, int(original_label), int(output_label_x), v, 0]
-                    df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_x_new), v, alpha]
+                    df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_x_new), v, alpha, con_num]
                 # print(f'output_label_y: {output_label_y}')
                 # print(f'output_label_x: {output_label_x}')
                 # print(f'output_label_y_new: {output_label_y_new}')
                 # print(f'output_label_x_new: {output_label_x_new}')
-    pickle.dump(df, open("changed_v_result", "wb"))
+    pickle.dump(df, open("generated/changed_v_result", "wb"))
 
 
 main()
