@@ -22,6 +22,7 @@ import re
 import pickle
 import time
 from tqdm import tqdm
+import sys
 
 
 def get_predicted_label(img, device, model):  # numpy array get from the previous
@@ -71,15 +72,6 @@ def main():
     #               [-0.2277, -0.0297, 1.0000]])
     epsilons = [0, 0.05, 0.1, 0.15, 0.2]
     pickle.dump(epsilons, open("generated/epsilons", "wb"))
-    # alpha = epsilons[1]
-    # v = np.array([[1,1,1],
-    #            [1,1,1],
-    #            [1,1,1]])
-    # show_np_array_as_jpg(y, 1)
-    # show_np_array_as_jpg(x, 2)
-    # show_np_array_as_jpg(y_new, 3)
-    # show_np_array_as_jpg(x_new, 4)
-
     '''
     # MNIST Test dataset and dataloader declaration
     test_loader = torch.utils.data.DataLoader(
@@ -103,13 +95,15 @@ def main():
     model.eval()
 
     # g = os.walk(r"./Test")
-    g = os.walk(r"./Test/10")
-    df = pd.DataFrame(columns=["original image name", "actual label for processed",
-                      "predicted label for processed", "v", "alpha", "condition number"])
+    folder = "./Test/" + sys.argv[1]
+    g = os.walk(folder)
+    # df = pd.DataFrame(columns=["original image name", "actual label for processed",
+    #                   "predicted label for processed", "v", "alpha", "condition number"])
     # total = 0
     # correct = 0
+    dict_list = []
     for path, dir_list, file_list in g:
-        for file_name in tqdm(file_list):
+        for file_name in tqdm(file_list, desc=folder):
             path_file = os.path.join(path, file_name)
             original_label = path.split("/")[-1]
             for v, con_num in zip(v_list, condition_list):
@@ -126,16 +120,23 @@ def main():
                     # df.loc[len(df.index)] = [file_name, int(original_label), int(output_label_y), np.identity(3), 0]
                     # df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_y_new), np.identity(3), alpha]
                     # df.loc[len(df.index)] = [file_name, int(original_label), int(output_label_x), v, 0]
-                    # didc = {
-                    #     "original image name": path_file, 
-                    #     "actual label for processed": int(original_label),
-                    # }
-                    df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_x_new), v, alpha, con_num]
+                    dict_data = {
+                        "original image name": path_file, 
+                        "actual label for processed": int(original_label),
+                        "predicted label for processed": int(output_label_x_new), 
+                        "v": v, 
+                        "alpha": alpha, 
+                        "condition number": con_num
+                    }
+                    dict_list.append(dict_data)
+                    # df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_x_new), v, alpha, con_num]
                 # print(f'output_label_y: {output_label_y}')
                 # print(f'output_label_x: {output_label_x}')
                 # print(f'output_label_y_new: {output_label_y_new}')
                 # print(f'output_label_x_new: {output_label_x_new}')
-    pickle.dump(df, open("generated/changed_v_result", "wb"))
+    df = pd.DataFrame.from_dict(dict_list)
+    save_name = "generated/unmerged_result/changed_v_result_" + sys.argv[1]
+    pickle.dump(df, open(save_name, "wb"))
     # print(correct / total)
 
 

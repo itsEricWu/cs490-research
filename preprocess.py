@@ -106,10 +106,10 @@ class Preprocess():
         condition_list = []
         for eps in eps_list:
             for i in range(0, num_matrix):
-                a = np.random.normal(0, 1, size=(3, 3))
+                a = np.random.normal(0, 1, size=(3, 3)) #random matrix
                 C = eps
-                u, s, v = np.linalg.svd(a, full_matrices=True)
-                s = s[0] * (1 - ((C - 1) / C) * (s[0] - s) / (s[0] - s[-1]))
+                u, s, v = np.linalg.svd(a, full_matrices=True) #svd
+                s = s[0] * (1 - ((C - 1) / C) * (s[0] - s) / (s[0] - s[-1])) #linear stretch
                 s = np.diag(s)
                 V = u @ s @ v
                 V_list.append(V)

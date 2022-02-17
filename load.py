@@ -15,5 +15,17 @@ import numpy as np
 # print(result[(result["actual label for processed"] == result["predicted label for processed"])
 #       & (result["alpha"] == 0.2) & (result["condition number"] == -1)])
 
-V_list = pickle.load(open("generated/changed_v_result", "rb"))
+# V_list = pickle.load(open("generated/V_list", "rb"))
+# print(V_list)
+
+# epsilons = pickle.load(open("generated/epsilons", "rb"))
+# print(epsilons)
+
+# condition_list = pickle.load(open("generated/condition_list", "rb"))
+# print(condition_list)
+
+# V_list = pickle.load(open("asd/merged_analysis", "rb"))
+# print(V_list)
+
+V_list = pickle.load(open("asd/unmerged_analysis/changed_v_folder10_analysis", "rb"))
 print(V_list)
