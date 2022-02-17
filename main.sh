@@ -1,8 +1,7 @@
 #!/bin/bash
 
-#SBATCH -A gpu
 #SBATCH --nodes=1 
-#SBATCH --time=02:00:00
+#SBATCH -A gpu
 #SBATCH --gres=gpu:1
 
 source /etc/profile.d/modules.sh

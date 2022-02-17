@@ -20,6 +20,8 @@ from torchvision import datasets, transforms
 import os
 import re
 import pickle
+import time
+from tqdm import tqdm
 
 
 def get_predicted_label(img, device, model):  # numpy array get from the previous
@@ -100,12 +102,14 @@ def main():
 
     model.eval()
 
-    g = os.walk(r"./Test")
-    # g = os.walk(r"./Test/0")
+    # g = os.walk(r"./Test")
+    g = os.walk(r"./Test/10")
     df = pd.DataFrame(columns=["original image name", "actual label for processed",
                       "predicted label for processed", "v", "alpha", "condition number"])
+    # total = 0
+    # correct = 0
     for path, dir_list, file_list in g:
-        for file_name in file_list:
+        for file_name in tqdm(file_list):
             path_file = os.path.join(path, file_name)
             original_label = path.split("/")[-1]
             for v, con_num in zip(v_list, condition_list):
@@ -116,16 +120,23 @@ def main():
                     # output_label_x = get_predicted_label(x, device, model)
                     # output_label_y_new = get_predicted_label(y_new, device, model)
                     output_label_x_new = get_predicted_label(x_new, device, model)
-
+                    # total += 1
+                    # if (int(output_label_x_new) == 10):
+                    #     correct += 1
                     # df.loc[len(df.index)] = [file_name, int(original_label), int(output_label_y), np.identity(3), 0]
                     # df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_y_new), np.identity(3), alpha]
                     # df.loc[len(df.index)] = [file_name, int(original_label), int(output_label_x), v, 0]
+                    # didc = {
+                    #     "original image name": path_file, 
+                    #     "actual label for processed": int(original_label),
+                    # }
                     df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_x_new), v, alpha, con_num]
                 # print(f'output_label_y: {output_label_y}')
                 # print(f'output_label_x: {output_label_x}')
                 # print(f'output_label_y_new: {output_label_y_new}')
                 # print(f'output_label_x_new: {output_label_x_new}')
     pickle.dump(df, open("generated/changed_v_result", "wb"))
+    # print(correct / total)
 
 
 main()

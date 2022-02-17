@@ -1,6 +1,7 @@
 import pickle
 import pandas as pd
 import numpy as np
+import tqdm as tqdm
 
 
 def old_result():
@@ -21,7 +22,7 @@ def old_result():
             else:
                 out_df.loc[len(out_df.index)] = [type[1], 0, 0, 0, c, a]
                 out_df.loc[len(out_df.index)] = [type[3], 0, 0, 0, c, a]
-
+    print("row created")
     # record data for each row
     for index, row in df.iterrows():
         a = row["alpha"]
@@ -38,6 +39,7 @@ def old_result():
         out_df.loc[((out_df.type == t) & (out_df.classfication == c) & (out_df.alpha == a)), "total"] += 1
         if row["actual label for processed"] == row["predicted label for processed"]:
             out_df.loc[((out_df.type == t) & (out_df.classfication == c) & (out_df.alpha == a)), "correct"] += 1
+    print("row inserted")
 
     # calculate accuracy for each row
     for index, row in out_df.iterrows():
@@ -69,7 +71,6 @@ def new_result():
     for index, row in out_df.iterrows():
         print(row)
         row["accuracy"] = row["correct"] / row["total"]
-    print(out_df)
     pickle.dump(out_df, open("generated/changed_v_analysis", "wb"))
 
 new_result()
