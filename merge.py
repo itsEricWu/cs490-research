@@ -37,3 +37,11 @@ def merge_analysis():
             f += 1
     df["accuracy"] = df["correct"] / df["total"]
     pickle.dump(df, open("generated/merged_analysis", "wb"))
+
+
+def merge():
+    merge_result()
+    merge_analysis()
+
+
+merge()
