@@ -1,7 +1,7 @@
 import pickle
 import pandas as pd
 import numpy as np
-import tqdm as tqdm
+from tqdm import tqdm
 import sys
 
 
@@ -51,6 +51,7 @@ import sys
 
 def analysis():
     read_file_path = "generated/unmerged_result/changed_v_result_" + sys.argv[1]
+    print(read_file_path)
     df = pickle.load(open(read_file_path, "rb"))
     out_df = pd.DataFrame(columns=["correct", "total", "accuracy", "alpha", "condition number"])
     epsilons = pickle.load(open("generated/epsilons", "rb"))
