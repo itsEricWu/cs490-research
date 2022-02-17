@@ -27,5 +27,5 @@ import numpy as np
 # V_list = pickle.load(open("asd/merged_analysis", "rb"))
 # print(V_list)
 
-V_list = pickle.load(open("generated/unmerged_result/changed_v_result_17", "rb"))
+V_list = pickle.load(open("generated/merged_analysis", "rb"))
 print(V_list)
