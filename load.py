@@ -27,5 +27,8 @@ import numpy as np
 # V_list = pickle.load(open("asd/merged_analysis", "rb"))
 # print(V_list)
 
-V_list = pickle.load(open("generated/merged_analysis", "rb"))
-print(V_list)
+# V_list = pickle.load(open("generated/merged_analysis", "rb"))
+# print(V_list)
+
+pixel_mean_variance = pickle.load(open("generated/image_description_results/pixel_mean_variance", "rb"))
+print(pixel_mean_variance)
