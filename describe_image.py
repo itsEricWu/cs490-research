@@ -81,8 +81,8 @@ def main():
             plt_color, means, variances = plot_rgb_histogram(input_file,output_path, j)
             #plt_color.savefig(f'{output_path}/color_histogram{j}.jpg')
             #row = [folder_name, image_name, grey_mean, grey_variance, b_mean, b_variance, g_mean, g_variance, r_mean, r_variance]
-            row_df = {"folder_name" : i,
-                        "image_name" : j,
+            row_df = {"folder_name" : str(i),
+                        "image_name" : str(j),
                         "grey_mean" : grey_mean,
                         "grey_variance" : grey_variance, 
                         "b_mean" : means[0], 
