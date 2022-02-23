@@ -117,7 +117,5 @@ class Preprocess():
         if identity:
             V_list.append(np.identity(3))
             condition_list.append(-1)
-        pickle.dump(V_list, open("generated/V_list", "wb"))
-        pickle.dump(condition_list, open("generated/condition_list", "wb"))
         return V_list, condition_list
 

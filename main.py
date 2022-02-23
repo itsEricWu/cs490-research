@@ -67,6 +67,8 @@ def get_predicted_label(img, device, model):  # numpy array get from the previou
 
 def main():
     v_list, condition_list = Preprocess.generate_v_matrix(num_condition=10, num_matrix=10, identity=True)
+    pickle.dump(v_list, open("generated/V_list", "wb"))
+    pickle.dump(condition_list, open("generated/condition_list", "wb"))
     # v = np.array([[1.0000, 0.0595, -0.1429],
     #               [0.0588, 1.0000, -0.1324],
     #               [-0.2277, -0.0297, 1.0000]])
@@ -121,11 +123,11 @@ def main():
                     # df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_y_new), np.identity(3), alpha]
                     # df.loc[len(df.index)] = [file_name, int(original_label), int(output_label_x), v, 0]
                     dict_data = {
-                        "original image name": path_file, 
+                        "original image name": path_file,
                         "actual label for processed": int(original_label),
-                        "predicted label for processed": int(output_label_x_new), 
-                        "v": v, 
-                        "alpha": alpha, 
+                        "predicted label for processed": int(output_label_x_new),
+                        "v": v,
+                        "alpha": alpha,
                         "condition number": con_num
                     }
                     dict_list.append(dict_data)
