@@ -87,9 +87,9 @@ class Preprocess():
         """
         # filename = "/home/zhan3447/CS490_DSC/jpg/{actual_label}/v{v_number}/n{n_number}/{original_filename}"
         filename = f"{filepath}.jpg"
-        # cv2.imwrite(filename, matrix) # does not work
-        plt.imshow(matrix)
-        plt.savefig(filename)
+        cv2.imwrite(filename, matrix) # does not work
+        # plt.imshow(matrix)
+        # plt.savefig(filename)
 
     def generate_v_matrix(num_condition=10, num_matrix=10, identity=True):
         """generate v matrix and condition number lists. It also saves two lists as files for future reference
