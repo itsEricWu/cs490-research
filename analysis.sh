@@ -1,8 +1,7 @@
 #!/bin/bash
 
-#SBATCH --nodes=1 
-#SBATCH -A gpu
-#SBATCH --gres=gpu:1
+#SBATCH --nodes=1
+#SBATCH --time=2:00:00
 # cd $SLURM_SUBMIT_DIR
 
 source /etc/profile.d/modules.sh
