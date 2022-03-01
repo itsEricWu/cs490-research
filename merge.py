@@ -41,7 +41,7 @@ def merge_analysis():
 
 def merge():
     merge_result()
-    merge_analysis()
+    # merge_analysis()
 
 
 merge()
