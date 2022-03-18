@@ -62,11 +62,11 @@ class Preprocess():
 
         xlong_new = xlong + alpha * np.random.normal(0, 1, (xlong.shape[0], xlong.shape[1]))
         # Projector input - Attacked #
-        x_new = np.zeros(y.shape)
-        # x_new = np.zeros(x.shape)
-        x_new[:, :, 0] = xlong_new[:, 0].reshape(ss[0], ss[1])
-        x_new[:, :, 1] = xlong_new[:, 1].reshape(ss[0], ss[1])
-        x_new[:, :, 2] = xlong_new[:, 2].reshape(ss[0], ss[1])
+        # x_new = np.zeros(y.shape)
+        # # x_new = np.zeros(x.shape)
+        # x_new[:, :, 0] = xlong_new[:, 0].reshape(ss[0], ss[1])
+        # x_new[:, :, 1] = xlong_new[:, 1].reshape(ss[0], ss[1])
+        # x_new[:, :, 2] = xlong_new[:, 2].reshape(ss[0], ss[1])
 
         ylong_new = np.transpose(np.matmul(v, np.transpose(xlong_new)))
         # Captured Image - Attacked #
@@ -78,9 +78,9 @@ class Preprocess():
         # y = cv2.convertScaleAbs(y, alpha=(255.0))
         # x = cv2.convertScaleAbs(x, alpha=(255.0))
         y_new = cv2.convertScaleAbs(y_new, alpha=(255.0))
-        x_new = cv2.convertScaleAbs(x_new, alpha=(255.0))
+        # x_new = cv2.convertScaleAbs(x_new, alpha=(255.0))
 
-        x_new = cv2.cvtColor(x_new, cv2.COLOR_RGB2BGR)
+        # x_new = cv2.cvtColor(x_new, cv2.COLOR_RGB2BGR)
         y_new = cv2.cvtColor(y_new, cv2.COLOR_RGB2BGR)
         # Captured original, Projector original, Captured attracked, Projector attacked
         return y_new
@@ -163,3 +163,54 @@ class Preprocess():
             V_list.append(np.identity(3))
             condition_list.append(-1)
         return V_list, condition_list
+
+    def linearize_image(img_filename, v, alpha):
+        """generate an one dimentional array from 3*32*32 matrix
+
+        Args:
+            img_filename (string): path to the image
+            v (nparray): 3 by 3 v matrix
+            alpha (float): noise strength
+
+        Returns:
+            nparray: an one dimentional array from 3*32*32 matrix
+        """
+        img = cv2.imread(img_filename)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        y = Preprocess.im2double(img)
+        ss = y.shape
+        ylong = np.zeros((ss[0] * ss[1], 3))
+        y1 = y[:, :, 0]
+        ylong[:, 0] = y1.flatten()
+        y2 = y[:, :, 1]
+        ylong[:, 1] = y2.flatten()
+        y3 = y[:, :, 2]
+        ylong[:, 2] = y3.flatten()
+        xlong = np.transpose(np.matmul(np.linalg.pinv(v), np.transpose(ylong)))
+        xlong[xlong > 1] = 1
+        xlong[xlong < 0] = 0
+        xlong_new = xlong + alpha * np.random.normal(0, 1, (xlong.shape[0], xlong.shape[1]))
+        ylong_new = np.transpose(np.matmul(v, np.transpose(xlong_new)))
+        y_new = np.zeros(y.shape)
+        y_new[:, :, 0] = ylong_new[:, 0].reshape(ss[0], ss[1])
+        y_new[:, :, 1] = ylong_new[:, 1].reshape(ss[0], ss[1])
+        y_new[:, :, 2] = ylong_new[:, 2].reshape(ss[0], ss[1])
+        y_new = cv2.convertScaleAbs(y_new, alpha=(255.0))
+        y_new = cv2.cvtColor(y_new, cv2.COLOR_RGB2BGR)
+        # Load the image
+        image = np.zeros((3, 32, 32))  # (rgb, width, height) guess:)
+
+        # add global.py code
+
+        # temp = cv.imread('ISO_400.png')
+        temp = y_new
+        temp = cv2.resize(temp, (32, 32))  # resize the input image
+        temp = temp[0:32, 0:32, :]
+
+        temp = temp.astype('float64') / 255
+        temp = temp[:, :, [2, 1, 0]]
+
+        image[0, :, :] = temp[:, :, 0]
+        image[1, :, :] = temp[:, :, 1]
+        image[2, :, :] = temp[:, :, 2]
+        return image.flatten()

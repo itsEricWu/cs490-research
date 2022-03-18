@@ -3,6 +3,7 @@ from tqdm import tqdm
 import os
 import pickle
 import pandas as pd
+import numpy as np
 
 
 def merge_result():
@@ -39,9 +40,30 @@ def merge_analysis():
     pickle.dump(df, open("generated/merged_analysis", "wb"))
 
 
+def merge_train_test():
+    folders = ["generated/train_test/unmerged_x_test_vectorize", "generated/train_test/unmerged_x_train_vectorize",
+               "generated/train_test/unmerged_y_test_vectorize", "generated/train_test/unmerged_y_train_vectorize"]
+    out_names = ["generated/train_test/merged_x_test", "generated/train_test/merged_x_train",
+                 "generated/train_test/merged_y_test", "generated/train_test/merged_y_train"]
+    for folder, out_name in zip(folders, out_names):
+        g = os.walk(folder)
+        f = 0
+        l = []
+        for path, dir_list, file_list in g:
+            for file_name in tqdm(file_list, desc=str(f)):
+                path_file = os.path.join(path, file_name)
+                temp = pickle.load(open(path_file, "rb"))
+                l.extend(temp.tolist())
+                f += 1
+        out = np.array(l)
+        pickle.dump(out, open(out_name, "wb"))
+
+
 def merge():
-    merge_result()
+    os.chdir("/scratch/scholar/lu677")
+    # merge_result()
     # merge_analysis()
+    merge_train_test()
 
 
 merge()
