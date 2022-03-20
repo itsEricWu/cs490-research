@@ -43,20 +43,67 @@ def merge_analysis():
 def merge_train_test():
     folders = ["generated/train_test/unmerged_x_test_vectorize", "generated/train_test/unmerged_x_train_vectorize",
                "generated/train_test/unmerged_y_test_vectorize", "generated/train_test/unmerged_y_train_vectorize"]
-    out_names = ["generated/train_test/merged_x_test", "generated/train_test/merged_x_train",
-                 "generated/train_test/merged_y_test", "generated/train_test/merged_y_train"]
+    out_names = ["generated/train_test/64bits/merged_x_test", "generated/train_test/64bits/merged_x_train",
+                 "generated/train_test/64bits/merged_y_test", "generated/train_test/64bits/merged_y_train"]
     for folder, out_name in zip(folders, out_names):
+        if os.path.exists(out_name):
+            os.remove(out_name)
         g = os.walk(folder)
         f = 0
-        l = []
         for path, dir_list, file_list in g:
+            file_list.sort()
             for file_name in tqdm(file_list, desc=str(f)):
+                l = []
                 path_file = os.path.join(path, file_name)
                 temp = pickle.load(open(path_file, "rb"))
                 l.extend(temp.tolist())
                 f += 1
-        out = np.array(l)
-        pickle.dump(out, open(out_name, "wb"))
+                out = np.array(l)
+                pickle.dump(out, open(out_name, "ab"))
+
+
+def merge_train_test_32():
+    folders = ["generated/train_test/unmerged_x_test_vectorize", "generated/train_test/unmerged_x_train_vectorize",
+               "generated/train_test/unmerged_y_test_vectorize", "generated/train_test/unmerged_y_train_vectorize"]
+    out_names = ["generated/train_test/32bits/merged_x_test", "generated/train_test/32bits/merged_x_train",
+                 "generated/train_test/32bits/merged_y_test", "generated/train_test/32bits/merged_y_train"]
+    for folder, out_name in zip(folders, out_names):
+        if os.path.exists(out_name):
+            os.remove(out_name)
+        g = os.walk(folder)
+        f = 0
+        for path, dir_list, file_list in g:
+            file_list.sort()
+            for file_name in tqdm(file_list, desc=str(f)):
+                l = []
+                path_file = os.path.join(path, file_name)
+                temp = pickle.load(open(path_file, "rb"))
+                l.extend(temp.tolist())
+                f += 1
+                out = np.array(l, dtype=np.float32)
+                pickle.dump(out, open(out_name, "ab"))
+
+
+def merge_train_test_16():
+    folders = ["generated/train_test/unmerged_x_test_vectorize", "generated/train_test/unmerged_x_train_vectorize",
+               "generated/train_test/unmerged_y_test_vectorize", "generated/train_test/unmerged_y_train_vectorize"]
+    out_names = ["generated/train_test/16bits/merged_x_test", "generated/train_test/16bits/merged_x_train",
+                 "generated/train_test/16bits/merged_y_test", "generated/train_test/16bits/merged_y_train"]
+    for folder, out_name in zip(folders, out_names):
+        if os.path.exists(out_name):
+            os.remove(out_name)
+        g = os.walk(folder)
+        f = 0
+        for path, dir_list, file_list in g:
+            file_list.sort()
+            for file_name in tqdm(file_list, desc=str(f)):
+                l = []
+                path_file = os.path.join(path, file_name)
+                temp = pickle.load(open(path_file, "rb"))
+                l.extend(temp.tolist())
+                f += 1
+                out = np.array(l, dtype=np.float16)
+                pickle.dump(out, open(out_name, "ab"))
 
 
 def merge():
@@ -64,6 +111,8 @@ def merge():
     # merge_result()
     # merge_analysis()
     merge_train_test()
+    merge_train_test_32()
+    merge_train_test_16()
 
 
 merge()

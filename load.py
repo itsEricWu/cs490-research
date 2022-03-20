@@ -11,8 +11,22 @@ def out():
     """
     pd.set_option('display.max_columns', None)
     # pd.set_option('display.max_rows', None)
-    out = pickle.load(open(sys.argv[1], "rb"))
-    print(out.shape)
+    if len(sys.argv) == 2:
+        out = pickle.load(open(sys.argv[1], "rb"))
+        print(out)
+    else:
+        out = loadall(sys.argv[1])
+        for i in out:
+            print(i.shape)
+
+
+def loadall(filename):
+    with open(filename, "rb") as f:
+        while True:
+            try:
+                yield pickle.load(f)
+            except EOFError:
+                break
 
 
 out()
