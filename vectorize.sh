@@ -1,9 +1,9 @@
 #!/bin/bash
 
-#SBATCH --nodes=1
+#SBATCH --nodes=2
 #SBATCH --time=2:30:00
 
-# cd $SLURM_SUBMIT_DIR
+cd $SLURM_SUBMIT_DIR
 
 source /etc/profile.d/modules.sh
 module load learning/conda-5.1.0-py36-gpu
