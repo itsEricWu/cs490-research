@@ -235,3 +235,6 @@ fabric.properties
 data/
 Train/
 Train.zip
+resnet/models
+TrainVal
+TrainVal.tar.gz

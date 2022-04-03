@@ -66,7 +66,7 @@ def get_predicted_label(img, device, model):  # numpy array get from the previou
 
 
 def main():
-    v_list, condition_list = Preprocess.generate_v_matrix(num_condition=10, num_matrix=10, identity=True)
+    v_list, condition_list = Preprocess.generate_v_matrix(num_condition=5, num_matrix=10, identity=True)
     pickle.dump(v_list, open("generated/V_list", "wb"))
     pickle.dump(condition_list, open("generated/condition_list", "wb"))
     # v = np.array([[1.0000, 0.0595, -0.1429],
@@ -116,7 +116,7 @@ def main():
                     # output_label_x = get_predicted_label(x, device, model)
                     # output_label_y_new = get_predicted_label(y_new, device, model)
                     output_label_x_new, prob_list = get_predicted_label(x_new, device, model)
-                    prob = prob_list[0][int(original_label)].item()
+                    # prob = prob_list[0][int(original_label)].item()
                     # total += 1
                     # if (int(output_label_x_new) == 10):
                     #     correct += 1
@@ -130,7 +130,7 @@ def main():
                         "v": v,
                         "alpha": alpha,
                         "condition number": con_num,
-                        "probability": prob
+                        # "probability": prob
                     }
                     dict_list.append(dict_data)
                     # df.loc[len(df.index)] = [path_file, int(original_label), int(output_label_x_new), v, alpha, con_num]

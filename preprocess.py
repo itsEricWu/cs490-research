@@ -114,7 +114,7 @@ class Preprocess():
         """
 
         np.random.seed(0)
-        eps_list = np.logspace(0, 3, num_condition)
+        eps_list = np.logspace(0, 1, num_condition)
         V_list = []
         condition_list = []
         for eps in eps_list:
