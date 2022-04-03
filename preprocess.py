@@ -11,9 +11,9 @@ class Preprocess():
         out = (im.astype('float') - min_val) / (max_val - min_val)
         return out
 
-    def preprocess_image(img_filename, v, alpha):
+    def preprocess_image_gaussian(img_filename, v, alpha):
         """
-        processs the image with v matrix and noise
+        processs the image with v matrix and normal noise
         input:
         img_filename: the path of an image in ppm format
         v matrix: 3 by 3 numpy array
@@ -86,7 +86,70 @@ class Preprocess():
         return y_new
         # return y, x, y_new, x_new
 
-    # , original_filename, actual_label, v_number, n_number):
+    def preprocess_image_poisson(img_filename, v, alpha):
+        """
+            processs the image with v matrix and poisson noise
+            input:
+            img_filename: the path of an image in ppm format
+            v matrix: 3 by 3 numpy array
+            alpha: coefficient used for generating gaussian noise
+            """
+        img = cv2.imread(img_filename)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        y = Preprocess.im2double(img)
+        ss = y.shape
+        ylong = np.zeros((ss[0] * ss[1], 3))
+        y1 = y[:, :, 0]
+        ylong[:, 0] = y1.flatten()
+        y2 = y[:, :, 1]
+        ylong[:, 1] = y2.flatten()
+        y3 = y[:, :, 2]
+        ylong[:, 2] = y3.flatten()
+        xlong = np.transpose(np.matmul(np.linalg.pinv(v), np.transpose(ylong)))
+        xlong[xlong > 1] = 1
+        xlong[xlong < 0] = 0
+        xlong_new = xlong + alpha * np.random.poisson(1, (xlong.shape[0], xlong.shape[1]))
+        ylong_new = np.transpose(np.matmul(v, np.transpose(xlong_new)))
+        y_new = np.zeros(y.shape)
+        y_new[:, :, 0] = ylong_new[:, 0].reshape(ss[0], ss[1])
+        y_new[:, :, 1] = ylong_new[:, 1].reshape(ss[0], ss[1])
+        y_new[:, :, 2] = ylong_new[:, 2].reshape(ss[0], ss[1])
+        y_new = cv2.convertScaleAbs(y_new, alpha=(255.0))
+        y_new = cv2.cvtColor(y_new, cv2.COLOR_RGB2BGR)
+        return y_new
+
+    def preprocess_image_speckle(img_filename, v, alpha):
+        """
+            processs the image with v matrix and speckle noise
+            input:
+            img_filename: the path of an image in ppm format
+            v matrix: 3 by 3 numpy array
+            alpha: coefficient used for generating gaussian noise
+            """
+        img = cv2.imread(img_filename)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        y = Preprocess.im2double(img)
+        ss = y.shape
+        ylong = np.zeros((ss[0] * ss[1], 3))
+        y1 = y[:, :, 0]
+        ylong[:, 0] = y1.flatten()
+        y2 = y[:, :, 1]
+        ylong[:, 1] = y2.flatten()
+        y3 = y[:, :, 2]
+        ylong[:, 2] = y3.flatten()
+        xlong = np.transpose(np.matmul(np.linalg.pinv(v), np.transpose(ylong)))
+        xlong[xlong > 1] = 1
+        xlong[xlong < 0] = 0
+        xlong_new = xlong + alpha * xlong * np.random.randn(xlong.shape[0], xlong.shape[1])
+        ylong_new = np.transpose(np.matmul(v, np.transpose(xlong_new)))
+        y_new = np.zeros(y.shape)
+        y_new[:, :, 0] = ylong_new[:, 0].reshape(ss[0], ss[1])
+        y_new[:, :, 1] = ylong_new[:, 1].reshape(ss[0], ss[1])
+        y_new[:, :, 2] = ylong_new[:, 2].reshape(ss[0], ss[1])
+        y_new = cv2.convertScaleAbs(y_new, alpha=(255.0))
+        y_new = cv2.cvtColor(y_new, cv2.COLOR_RGB2BGR)
+        return y_new
+
     def show_np_array_as_jpg(matrix, filepath):
         """store image to filepath
 
@@ -100,7 +163,7 @@ class Preprocess():
         # plt.imshow(matrix)
         # plt.savefig(filename)
 
-    def generate_v_matrix(num_condition=10, num_matrix=10, identity=True):
+    def generate_v_matrix(num_condition=5, num_matrix=3, identity=True):
         """generate v matrix and condition number lists. It also saves two lists as files for future reference
 
         Args:
@@ -112,7 +175,6 @@ class Preprocess():
             V_list: v matrix list
             condition_list: condition number list
         """
-
         np.random.seed(0)
         eps_list = np.logspace(0, 1, num_condition)
         V_list = []

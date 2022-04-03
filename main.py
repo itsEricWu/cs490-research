@@ -66,7 +66,7 @@ def get_predicted_label(img, device, model):  # numpy array get from the previou
 
 
 def main():
-    v_list, condition_list = Preprocess.generate_v_matrix(num_condition=5, num_matrix=10, identity=True)
+    v_list, condition_list = Preprocess.generate_v_matrix(num_condition=5, num_matrix=3, identity=True)
     pickle.dump(v_list, open("generated/V_list", "wb"))
     pickle.dump(condition_list, open("generated/condition_list", "wb"))
     # v = np.array([[1.0000, 0.0595, -0.1429],
