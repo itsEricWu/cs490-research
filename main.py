@@ -66,14 +66,12 @@ def get_predicted_label(img, device, model):  # numpy array get from the previou
 
 
 def main():
-    v_list, condition_list = Preprocess.generate_v_matrix(num_condition=5, num_matrix=3, identity=True)
-    pickle.dump(v_list, open("LeNet/V_list", "wb"))
-    pickle.dump(condition_list, open("LeNet/condition_list", "wb"))
+    v_list = pickle.load(open("generated/V_list", "rb"))
+    condition_list = pickle.load(open("generated/condition_list", "rb"))
     # v = np.array([[1.0000, 0.0595, -0.1429],
     #               [0.0588, 1.0000, -0.1324],
     #               [-0.2277, -0.0297, 1.0000]])
     epsilons = [0, 0.05, 0.1, 0.15, 0.2]
-    pickle.dump(epsilons, open("LeNet/epsilons", "wb"))
     '''
     # MNIST Test dataset and dataloader declaration
     test_loader = torch.utils.data.DataLoader(
