@@ -235,6 +235,7 @@ fabric.properties
 data/
 Train/
 Train.zip
-resnet/models
+Resnet/models
 TrainVal
 TrainVal.tar.gz
+LeNet/

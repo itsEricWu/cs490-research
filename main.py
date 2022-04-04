@@ -67,13 +67,13 @@ def get_predicted_label(img, device, model):  # numpy array get from the previou
 
 def main():
     v_list, condition_list = Preprocess.generate_v_matrix(num_condition=5, num_matrix=3, identity=True)
-    pickle.dump(v_list, open("generated/V_list", "wb"))
-    pickle.dump(condition_list, open("generated/condition_list", "wb"))
+    pickle.dump(v_list, open("LeNet/V_list", "wb"))
+    pickle.dump(condition_list, open("LeNet/condition_list", "wb"))
     # v = np.array([[1.0000, 0.0595, -0.1429],
     #               [0.0588, 1.0000, -0.1324],
     #               [-0.2277, -0.0297, 1.0000]])
     epsilons = [0, 0.05, 0.1, 0.15, 0.2]
-    pickle.dump(epsilons, open("generated/epsilons", "wb"))
+    pickle.dump(epsilons, open("LeNet/epsilons", "wb"))
     '''
     # MNIST Test dataset and dataloader declaration
     test_loader = torch.utils.data.DataLoader(
@@ -110,7 +110,7 @@ def main():
             original_label = path.split("/")[-1]
             for v, con_num in zip(v_list, condition_list):
                 for alpha in epsilons:
-                    x_new = Preprocess.preprocess_image(path_file, v, alpha)
+                    x_new = Preprocess.preprocess_image_gaussian(path_file, v, alpha)
                     # y, x, y_new, x_new = Preprocess.preprocess_image(path_file, v, alpha)
                     # output_label_y = get_predicted_label(y, device, model)
                     # output_label_x = get_predicted_label(x, device, model)
@@ -139,7 +139,7 @@ def main():
                 # print(f'output_label_y_new: {output_label_y_new}')
                 # print(f'output_label_x_new: {output_label_x_new}')
     df = pd.DataFrame.from_dict(dict_list)
-    save_name = "generated/unmerged_result/changed_v_result_" + sys.argv[1]
+    save_name = "LeNet/gaussian/unmerged_result/changed_v_result_" + sys.argv[1]
     pickle.dump(df, open(save_name, "wb"))
     # print(correct / total)
 

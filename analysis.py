@@ -50,7 +50,7 @@ import sys
 #     pickle.dump(out_df, open("analysis", "wb"))
 
 def analysis():
-    read_file_path = "generated/unmerged_result/changed_v_result_" + sys.argv[1]
+    read_file_path = "/home/lu677/cs490/cs490-research/LeNet/gaussian/unmerged_result/changed_v_result_" + sys.argv[1]
     print(read_file_path)
     df = pickle.load(open(read_file_path, "rb"))
     out_df = pd.DataFrame(columns=["correct", "total", "accuracy", "alpha", "condition number"])

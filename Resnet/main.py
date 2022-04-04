@@ -10,7 +10,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 import pickle
 from resenet_model import Net
-sys.path.append("/home/lu677/cs490/cs490-research/resnet")
+sys.path.append("/home/lu677/cs490/cs490-research/Resnet")
+
 
 def main():
 
@@ -18,7 +19,7 @@ def main():
     valid_dir = "/home/lu677/cs490/cs490-research/TrainVal/Val"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Using device: ", device)
-
+    
     layer = 2048
     batch_size = 64
     learning_rate = 0.01
@@ -28,7 +29,10 @@ def main():
     log_interval = 10
     epochs = 5
     load_from = ""
-    save_to = "/home/lu677/cs490/cs490-research/resnet/models/"
+    save_to = "/home/lu677/cs490/cs490-research/Resnet/models/"
+
+    l_train_loss = []
+    l_val_loss = []
 
     data_transform = transforms.Compose([
         transforms.Resize((48, 48)),
@@ -49,23 +53,32 @@ def main():
     valid_dataset = datasets.ImageFolder(valid_dir, transform=data_transform)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, drop_last=True, shuffle=True)
     valid_loader = DataLoader(valid_dataset, batch_size=batch_size, drop_last=True, shuffle=True)
-    model = Net(l=layer).to(device)
-    if torch.cuda.device_count() > 1:
-        print("Let's use", torch.cuda.device_count(), "GPUs!")
-        model = nn.DataParallel(model)
-    first_epoch = 1
-    if load_from != '':
-        first_epoch = int(filter(str.isdigit, load_from))
-        model.load_state_dict(torch.load(load_from))
-    optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum, weight_decay=weight_decay, nesterov=nesterov)
-    losses = []
-    for epoch in range(first_epoch, epochs + 1):
-        train_loss = train(epoch, model, optimizer, device, train_loader, log_interval)
-        val_loss = validation(model, valid_loader, device)
-        losses.append((epoch, train_loss, val_loss))
+
+
+    for layer in l_layer:
+        model = Net(l=layer).to(device)
+        if torch.cuda.device_count() > 1:
+            print("Let's use", torch.cuda.device_count(), "GPUs!")
+            model = nn.DataParallel(model)
+        first_epoch = 1
+        if load_from != '':
+            first_epoch = int(filter(str.isdigit, load_from))
+            model.load_state_dict(torch.load(load_from))
+        optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum,
+                            weight_decay=weight_decay, nesterov=nesterov)
+        train_loss = None
+        val_loss = None
+        for epoch in range(first_epoch, epochs + 1):
+            train_loss = train(epoch, model, optimizer, device, train_loader, log_interval)
+            val_loss = validation(model, valid_loader, device)
         model_file = save_to + 'model_' + str(epoch) + '.pth'
         torch.save(model.state_dict(), model_file)
-        pickle.dump(losses, open(save_to + 'losses.p', 'wb'))
+        l_train_loss.append(train_loss)
+        l_val_loss.append(val_loss[0])
+
+    pickle.dump(l_train_loss, open(save_to + 'l_train_loss', 'wb'))
+    pickle.dump(l_val_loss, open(save_to + 'l_val_loss', 'wb'))
+
 
 def train(epoch, model, optimizer, device, train_loader, log_interval):
     avg_loss = 0
@@ -106,7 +119,6 @@ def validation(model, valid_loader, device):
         100. * correct / len(valid_loader.dataset)))
 
     return validation_loss.detach().cpu().numpy()
-
 
 
 main()
