@@ -4,11 +4,12 @@ import os
 import pickle
 import pandas as pd
 import numpy as np
+import sys
 
 
 def merge_result():
     df = pd.DataFrame()
-    folder = "./generated/unmerged_result/"
+    folder = sys.argv[1] + "/unmerged_result/"
     g = os.walk(folder)
     f = 0
     for path, dir_list, file_list in g:
@@ -18,12 +19,12 @@ def merge_result():
             print(temp)
             df = df.append(temp)
             f += 1
-    pickle.dump(df, open("generated/merged_result", "wb"))
+    pickle.dump(df, open(sys.argv[1] + "/merged_result", "wb"))
 
 
 def merge_analysis():
     df = pd.DataFrame()
-    folder = "./generated/unmerged_analysis/"
+    folder = sys.argv[1] + "/unmerged_analysis/"
     g = os.walk(folder)
     f = 0
     for path, dir_list, file_list in g:
@@ -37,7 +38,7 @@ def merge_analysis():
                 df["total"] += temp["total"]
             f += 1
     df["accuracy"] = df["correct"] / df["total"]
-    pickle.dump(df, open("generated/merged_analysis", "wb"))
+    pickle.dump(df, open(sys.argv[1] + "/merged_analysis", "wb"))
 
 
 def merge_train_test(folders, out_names):
@@ -149,41 +150,41 @@ def merge_train_test_16_one(folders, out_names):
 
 
 def merge():
-    os.chdir("/scratch/scholar/lu677")
-    # merge_result()
-    # merge_analysis()
-    folders = ["generated/train_test/unmerged_x_test_normalize", "generated/train_test/unmerged_x_train_normalize",
-               "generated/train_test/unmerged_y_test_normalize", "generated/train_test/unmerged_y_train_normalize"]
-    # out_names = ["generated/train_test/64bits/merged_x_test_normalize",
-    #              "generated/train_test/64bits/merged_x_train_normalize",
-    #              "generated/train_test/64bits/merged_y_test_normalize",
-    #              "generated/train_test/64bits/merged_y_train_normalize"]
-    # merge_train_test(folders, out_names)
-    # out_names = ["generated/train_test/32bits/merged_x_test_normalize",
-    #              "generated/train_test/32bits/merged_x_train_normalize",
-    #              "generated/train_test/32bits/merged_y_test_normalize",
-    #              "generated/train_test/32bits/merged_y_train_normalize"]
-    # merge_train_test_32(folders, out_names)
-    # out_names = ["generated/train_test/16bits/merged_x_test_normalize",
-    #              "generated/train_test/16bits/merged_x_train_normalize",
-    #              "generated/train_test/16bits/merged_y_test_normalize",
-    #              "generated/train_test/16bits/merged_y_train_normalize"]
-    # merge_train_test_16(folders, out_names)
-    out_names = ["generated/train_test/64bits/merged_x_test_normalize_one",
-                 "generated/train_test/64bits/merged_x_train_normalize_one",
-                 "generated/train_test/64bits/merged_y_test_normalize_one",
-                 "generated/train_test/64bits/merged_y_train_normalize_one"]
-    merge_train_test_one(folders, out_names)
-    out_names = ["generated/train_test/32bits/merged_x_test_normalize_one",
-                 "generated/train_test/32bits/merged_x_train_normalize_one",
-                 "generated/train_test/32bits/merged_y_test_normalize_one",
-                 "generated/train_test/32bits/merged_y_train_normalize_one"]
-    merge_train_test_32_one(folders, out_names)
-    out_names = ["generated/train_test/16bits/merged_x_test_normalize_one",
-                 "generated/train_test/16bits/merged_x_train_normalize_one",
-                 "generated/train_test/16bits/merged_y_test_normalize_one",
-                 "generated/train_test/16bits/merged_y_train_normalize_one"]
-    merge_train_test_16_one(folders, out_names)
+    # os.chdir("/scratch/scholar/lu677")
+    merge_result()
+    merge_analysis()
+    # folders = ["generated/train_test/unmerged_x_test_normalize", "generated/train_test/unmerged_x_train_normalize",
+    #            "generated/train_test/unmerged_y_test_normalize", "generated/train_test/unmerged_y_train_normalize"]
+    # # out_names = ["generated/train_test/64bits/merged_x_test_normalize",
+    # #              "generated/train_test/64bits/merged_x_train_normalize",
+    # #              "generated/train_test/64bits/merged_y_test_normalize",
+    # #              "generated/train_test/64bits/merged_y_train_normalize"]
+    # # merge_train_test(folders, out_names)
+    # # out_names = ["generated/train_test/32bits/merged_x_test_normalize",
+    # #              "generated/train_test/32bits/merged_x_train_normalize",
+    # #              "generated/train_test/32bits/merged_y_test_normalize",
+    # #              "generated/train_test/32bits/merged_y_train_normalize"]
+    # # merge_train_test_32(folders, out_names)
+    # # out_names = ["generated/train_test/16bits/merged_x_test_normalize",
+    # #              "generated/train_test/16bits/merged_x_train_normalize",
+    # #              "generated/train_test/16bits/merged_y_test_normalize",
+    # #              "generated/train_test/16bits/merged_y_train_normalize"]
+    # # merge_train_test_16(folders, out_names)
+    # out_names = ["generated/train_test/64bits/merged_x_test_normalize_one",
+    #              "generated/train_test/64bits/merged_x_train_normalize_one",
+    #              "generated/train_test/64bits/merged_y_test_normalize_one",
+    #              "generated/train_test/64bits/merged_y_train_normalize_one"]
+    # merge_train_test_one(folders, out_names)
+    # out_names = ["generated/train_test/32bits/merged_x_test_normalize_one",
+    #              "generated/train_test/32bits/merged_x_train_normalize_one",
+    #              "generated/train_test/32bits/merged_y_test_normalize_one",
+    #              "generated/train_test/32bits/merged_y_train_normalize_one"]
+    # merge_train_test_32_one(folders, out_names)
+    # out_names = ["generated/train_test/16bits/merged_x_test_normalize_one",
+    #              "generated/train_test/16bits/merged_x_train_normalize_one",
+    #              "generated/train_test/16bits/merged_y_test_normalize_one",
+    #              "generated/train_test/16bits/merged_y_train_normalize_one"]
+    # merge_train_test_16_one(folders, out_names)
 
 
 merge()

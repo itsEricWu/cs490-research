@@ -50,7 +50,7 @@ import sys
 #     pickle.dump(out_df, open("analysis", "wb"))
 
 def analysis():
-    read_file_path = "/home/lu677/cs490/cs490-research/LeNet/gaussian/unmerged_result/changed_v_result_" + sys.argv[1]
+    read_file_path = sys.argv[2] + "/unmerged_result/changed_v_result_" + sys.argv[1]
     print(read_file_path)
     df = pickle.load(open(read_file_path, "rb"))
     out_df = pd.DataFrame(columns=["correct", "total", "accuracy", "alpha", "condition number"])
@@ -74,7 +74,7 @@ def analysis():
     # calculate accuracy for each row
     for index, row in tqdm(out_df.iterrows(), desc="calculating accuracy"):
         row["accuracy"] = row["correct"] / row["total"]
-    save_file_path = "generated/unmerged_analysis/changed_v_analysis_" + sys.argv[1]
+    save_file_path = sys.argv[2] + "/unmerged_analysis/changed_v_analysis_" + sys.argv[1]
     pickle.dump(out_df, open(save_file_path, "wb"))
 
 

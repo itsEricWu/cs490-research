@@ -1,3 +1,10 @@
 import torch
+import sys
+sys.path.append("/home/lu677/cs490/cs490-research/Resnet")
 
-print(torch.cuda.is_available())
+
+def test():
+    print(torch.cuda.is_available())
+
+
+test()

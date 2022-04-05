@@ -108,7 +108,7 @@ def main():
             original_label = path.split("/")[-1]
             for v, con_num in zip(v_list, condition_list):
                 for alpha in epsilons:
-                    x_new = Preprocess.preprocess_image_gaussian(path_file, v, alpha)
+                    x_new = Preprocess.preprocess_image_speckle(path_file, v, alpha)
                     # y, x, y_new, x_new = Preprocess.preprocess_image(path_file, v, alpha)
                     # output_label_y = get_predicted_label(y, device, model)
                     # output_label_x = get_predicted_label(x, device, model)
@@ -137,7 +137,7 @@ def main():
                 # print(f'output_label_y_new: {output_label_y_new}')
                 # print(f'output_label_x_new: {output_label_x_new}')
     df = pd.DataFrame.from_dict(dict_list)
-    save_name = "LeNet/gaussian/unmerged_result/changed_v_result_" + sys.argv[1]
+    save_name = sys.argv[2] + "/unmerged_result/changed_v_result_" + sys.argv[1]
     pickle.dump(df, open(save_name, "wb"))
     # print(correct / total)
 

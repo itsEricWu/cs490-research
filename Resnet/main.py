@@ -10,7 +10,71 @@ import torch.nn.functional as F
 import torch.optim as optim
 import pickle
 from resenet_model import Net
-sys.path.append("/home/lu677/cs490/cs490-research/Resnet")
+# sys.path.append("/home/lu677/cs490/cs490-research/Resnet")
+
+
+def final():
+
+    train_dir = "/home/lu677/cs490/cs490-research/TrainVal/Train"
+    valid_dir = "/home/lu677/cs490/cs490-research/TrainVal/Val"
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print("Using device: ", device)
+    l_epochs = [5, 10, 20, 40, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1280]
+    layer = 512
+    l_layer = [64, 128, 256, 512, 1024, 2048, 4096]
+    batch_size = 16
+    l_batch_size = [2, 8, 16, 32, 64, 128]
+    learning_rate = 0.01
+    l_learning_rate = [0.1, 0.01, 0.001, 0.0001, 0.00001]
+    momentum = 0.9
+    l_momentum = [0.1, 0.3, 0.5, 0.7, 0.9, 0.99]
+    weight_decay = 1e-6
+    l_weight_decay = [0, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1]
+    nesterov = False
+    l_nesterov = [True, False]
+    log_interval = 10
+    epochs = 1280
+    load_from = ""
+    save_to = "/home/lu677/cs490/cs490-research/Resnet/epochs/"
+
+    l_train_loss = []
+    l_val_loss = []
+
+    data_transform = transforms.Compose([
+        transforms.Resize((48, 48)),
+        transforms.ToTensor(),
+        transforms.Normalize((0.3394, 0.3081, 0.3161), (0.2753, 0.2631, 0.2685))
+    ])
+
+    train_dataset = datasets.ImageFolder(train_dir, transform=data_transform)
+    valid_dataset = datasets.ImageFolder(valid_dir, transform=data_transform)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, drop_last=True, shuffle=True)
+    valid_loader = DataLoader(valid_dataset, batch_size=batch_size, drop_last=True, shuffle=True)
+
+    model = Net(l=layer).to(device)
+    if torch.cuda.device_count() > 1:
+        print("Let's use", torch.cuda.device_count(), "GPUs!")
+        model = nn.DataParallel(model)
+    first_epoch = 1
+    if load_from != '':
+        first_epoch = int(filter(str.isdigit, load_from))
+        model.load_state_dict(torch.load(load_from))
+    optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum,
+                          weight_decay=weight_decay, nesterov=nesterov)
+    train_loss = None
+    val_loss = None
+    for epoch in range(first_epoch, epochs + 1):
+        train_loss = train(epoch, model, optimizer, device, train_loader, log_interval)
+        val_loss = validation(model, valid_loader, device)
+        model_file = save_to + 'model_' + str(epoch) + '.pth'
+        if epoch in l_epochs:
+            torch.save(model.state_dict(), model_file)
+            pickle.dump(l_train_loss, open(save_to + 'l_train_loss_' + str(epoch), 'wb'))
+            pickle.dump(l_val_loss, open(save_to + 'l_val_loss_' + str(epoch), 'wb'))
+        l_train_loss.append(train_loss)
+        l_val_loss.append(val_loss)
+        pickle.dump(l_train_loss, open(save_to + 'l_train_loss', 'wb'))
+        pickle.dump(l_val_loss, open(save_to + 'l_val_loss', 'wb'))
 
 
 def main():
@@ -19,17 +83,38 @@ def main():
     valid_dir = "/home/lu677/cs490/cs490-research/TrainVal/Val"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Using device: ", device)
-    
-    layer = 2048
-    batch_size = 64
+
+    # layer = 2048
+    # l_layer = [64, 128, 256, 512, 1024, 2048, 4096]
+    # batch_size = 64
+    # l_batch_size = [2, 8, 16, 32, 64, 128]
+    # learning_rate = 0.01
+    # l_learning_rate = [0.1, 0.01, 0.001, 0.0001, 0.00001]
+    # momentum = 0.9
+    # l_momentum = [0.1, 0.3, 0.5, 0.7, 0.9, 0.99]
+    # weight_decay = 1e-6
+    # l_weight_decay = [0, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6]
+    # nesterov = True
+    # l_nesterov = [True, False]
+    # log_interval = 10
+    # epochs = 5
+    l_epochs = [5, 10, 20, 40, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1280]
+    layer = 512
+    l_layer = [64, 128, 256, 512, 1024, 2048, 4096]
+    batch_size = 16
+    l_batch_size = [2, 8, 16, 32, 64, 128]
     learning_rate = 0.01
+    l_learning_rate = [0.1, 0.01, 0.001, 0.0001, 0.00001]
     momentum = 0.9
+    l_momentum = [0.1, 0.3, 0.5, 0.7, 0.9, 0.99]
     weight_decay = 1e-6
-    nesterov = True
+    l_weight_decay = [0, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1]
+    nesterov = False
+    l_nesterov = [True, False]
     log_interval = 10
-    epochs = 5
+    epochs = 10
     load_from = ""
-    save_to = "/home/lu677/cs490/cs490-research/Resnet/models/"
+    save_to = "/home/lu677/cs490/cs490-research/Resnet/batch_size/"
 
     l_train_loss = []
     l_val_loss = []
@@ -53,9 +138,7 @@ def main():
     valid_dataset = datasets.ImageFolder(valid_dir, transform=data_transform)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, drop_last=True, shuffle=True)
     valid_loader = DataLoader(valid_dataset, batch_size=batch_size, drop_last=True, shuffle=True)
-
-
-    for layer in l_layer:
+    for batch_size in l_batch_size:
         model = Net(l=layer).to(device)
         if torch.cuda.device_count() > 1:
             print("Let's use", torch.cuda.device_count(), "GPUs!")
@@ -65,17 +148,17 @@ def main():
             first_epoch = int(filter(str.isdigit, load_from))
             model.load_state_dict(torch.load(load_from))
         optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum,
-                            weight_decay=weight_decay, nesterov=nesterov)
+                              weight_decay=weight_decay, nesterov=nesterov)
         train_loss = None
         val_loss = None
         for epoch in range(first_epoch, epochs + 1):
             train_loss = train(epoch, model, optimizer, device, train_loader, log_interval)
             val_loss = validation(model, valid_loader, device)
-        model_file = save_to + 'model_' + str(epoch) + '.pth'
-        torch.save(model.state_dict(), model_file)
+            model_file = save_to + 'model_' + str(epoch) + '.pth'
+            if epoch in l_epochs:
+                torch.save(model.state_dict(), model_file)
         l_train_loss.append(train_loss)
-        l_val_loss.append(val_loss[0])
-
+        l_val_loss.append(val_loss)
     pickle.dump(l_train_loss, open(save_to + 'l_train_loss', 'wb'))
     pickle.dump(l_val_loss, open(save_to + 'l_val_loss', 'wb'))
 
@@ -121,4 +204,5 @@ def validation(model, valid_loader, device):
     return validation_loss.detach().cpu().numpy()
 
 
-main()
+# main()
+final()
