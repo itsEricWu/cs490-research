@@ -19,7 +19,7 @@ def final():
     valid_dir = "/home/lu677/cs490/cs490-research/TrainVal/Val"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Using device: ", device)
-    l_epochs = [5, 10, 20, 40, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1280]
+    l_epochs = [100, 110, 115, 120, 125, 130, 135, 140, 145, 150]
     layer = 512
     l_layer = [64, 128, 256, 512, 1024, 2048, 4096]
     batch_size = 16
@@ -33,8 +33,9 @@ def final():
     nesterov = False
     l_nesterov = [True, False]
     log_interval = 10
-    epochs = 1280
-    load_from = ""
+    epochs = 151
+    load_from = "/home/lu677/cs490/cs490-research/Resnet/epochs/model_100.pth"
+    first_epoch = 100
     save_to = "/home/lu677/cs490/cs490-research/Resnet/epochs/"
 
     l_train_loss = []
@@ -55,9 +56,7 @@ def final():
     if torch.cuda.device_count() > 1:
         print("Let's use", torch.cuda.device_count(), "GPUs!")
         model = nn.DataParallel(model)
-    first_epoch = 1
     if load_from != '':
-        first_epoch = int(filter(str.isdigit, load_from))
         model.load_state_dict(torch.load(load_from))
     optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum,
                           weight_decay=weight_decay, nesterov=nesterov)
@@ -113,7 +112,7 @@ def main():
     l_nesterov = [True, False]
     log_interval = 10
     epochs = 10
-    load_from = ""
+    load_from = "/home/lu677/cs490/cs490-research/Resnet/epochs/model_100.pth"
     save_to = "/home/lu677/cs490/cs490-research/Resnet/batch_size/"
 
     l_train_loss = []
@@ -143,9 +142,7 @@ def main():
         if torch.cuda.device_count() > 1:
             print("Let's use", torch.cuda.device_count(), "GPUs!")
             model = nn.DataParallel(model)
-        first_epoch = 1
         if load_from != '':
-            first_epoch = int(filter(str.isdigit, load_from))
             model.load_state_dict(torch.load(load_from))
         optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum,
                               weight_decay=weight_decay, nesterov=nesterov)

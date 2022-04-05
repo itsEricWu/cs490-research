@@ -236,5 +236,7 @@ data/
 Train/
 Train.zip
 Resnet/epochs
+Resnet/generated
 TrainVal
 TrainVal.tar.gz
+*.out

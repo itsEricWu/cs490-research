@@ -23,27 +23,23 @@ import pickle
 import time
 from tqdm import tqdm
 import sys
+from PIL import Image
 
 
 def get_predicted_label(img, device, model):  # numpy array get from the previous
-    model.eval()
-    validation_loss = 0
-    correct = 0
     with torch.no_grad():
-        for data, target in valid_loader:
-            data, target = data.to(device), target.to(device)
-            output = model(data)
-            validation_loss += F.nll_loss(output, target, size_average=False).data  # sum up batch loss
-            pred = output.data.max(1, keepdim=True)[1]  # get the index of the max log-probability
-            correct += pred.eq(target.data.view_as(pred)).cpu().sum()
-
-    validation_loss /= len(valid_loader.dataset)
-    print('\nValidation set: Average loss: {:.6f}, Accuracy: {}/{} ({:.6f}%)\n'.format(
-        validation_loss, correct, len(valid_loader.dataset),
-        100. * correct / len(valid_loader.dataset)))
-
-    return validation_loss.detach().cpu().numpy()
-    return torch.argmax(output).item(), torch.exp(output)  # predicted label for the image and probability
+        img = Image.fromarray(img)
+        data_transform = transforms.Compose([
+            transforms.Resize((48, 48)),
+            transforms.ToTensor(),
+            transforms.Normalize((0.3394, 0.3081, 0.3161), (0.2753, 0.2631, 0.2685))
+        ])
+        data = data_transform(img)
+        data = data.unsqueeze(0)
+        data = data.to(device)
+        output = model(data)
+        pred = output.data.max(1, keepdim=True)[1]
+        return pred
 
 
 def main():
@@ -69,9 +65,9 @@ def main():
     device = torch.device("cuda" if (use_cuda and torch.cuda.is_available()) else "cpu")
 
     # Load the pretrained model
-    model = TrafficNet()
+    model = Net(l=512)
     model = model.to(device)
-    model.load_state_dict(torch.load('Traffic_sign_new/Checkpoints/epoch_999.pth'))
+    model.load_state_dict(torch.load('/home/lu677/cs490/cs490-research/Resnet/epochs/model_150.pth'))
 
     model.eval()
 
@@ -89,12 +85,12 @@ def main():
             original_label = path.split("/")[-1]
             for v, con_num in zip(v_list, condition_list):
                 for alpha in epsilons:
-                    x_new = Preprocess.preprocess_image_speckle(path_file, v, alpha)
+                    x_new = Preprocess.preprocess_image_gaussian(path_file, v, alpha)
                     # y, x, y_new, x_new = Preprocess.preprocess_image(path_file, v, alpha)
                     # output_label_y = get_predicted_label(y, device, model)
                     # output_label_x = get_predicted_label(x, device, model)
                     # output_label_y_new = get_predicted_label(y_new, device, model)
-                    output_label_x_new, prob_list = get_predicted_label(x_new, device, model)
+                    output_label_x_new = get_predicted_label(x_new, device, model)
                     # prob = prob_list[0][int(original_label)].item()
                     # total += 1
                     # if (int(output_label_x_new) == 10):
