@@ -24,7 +24,8 @@ class Preprocess():
         # projector should be, assuming zero illumination other than the projector.
         # Note : Not all scenes are possible for all v matrices. For some matrices
         # some scenes are not possible at all.
-
+        if alpha == 0 and np.array_equal(v, np.identity(3)):
+            return cv2.imread(img_filename)
         img = cv2.imread(img_filename)  # numpy array
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
@@ -94,6 +95,8 @@ class Preprocess():
             v matrix: 3 by 3 numpy array
             alpha: coefficient used for generating gaussian noise
             """
+        if alpha == 0 and np.array_equal(v, np.identity(3)):
+            return cv2.imread(img_filename)
         img = cv2.imread(img_filename)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         y = Preprocess.im2double(img)
@@ -126,6 +129,8 @@ class Preprocess():
             v matrix: 3 by 3 numpy array
             alpha: coefficient used for generating gaussian noise
             """
+        if alpha == 0 and np.array_equal(v, np.identity(3)):
+            return cv2.imread(img_filename)
         img = cv2.imread(img_filename)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         y = Preprocess.im2double(img)
