@@ -16,7 +16,6 @@ def merge_result():
         for file_name in tqdm(file_list, desc=str(f)):
             path_file = os.path.join(path, file_name)
             temp = pickle.load(open(path_file, "rb"))
-            print(temp)
             df = df.append(temp)
             f += 1
     pickle.dump(df, open(sys.argv[1] + "/merged_result", "wb"))

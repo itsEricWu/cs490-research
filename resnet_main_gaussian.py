@@ -26,9 +26,13 @@ import sys
 from PIL import Image
 
 
+d = {'0': 0, '1': 1, '10': 2, '11': 3, '12': 4, '13': 5, '14': 6, '15': 7, '16': 8, '17': 9, '18': 10, '2': 11, '3': 12, '4': 13, '5': 14, '6': 15, '7': 16, '8': 17, '9': 18}
+m = {str(value):int(key) for key, value in d.items()}
+
 def get_predicted_label(img, device, model):  # numpy array get from the previous
     with torch.no_grad():
-        img = Image.fromarray(img)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = Image.fromarray(img, "RGB")
         data_transform = transforms.Compose([
             transforms.Resize((48, 48)),
             transforms.ToTensor(),
@@ -39,7 +43,8 @@ def get_predicted_label(img, device, model):  # numpy array get from the previou
         data = data.to(device)
         output = model(data)
         pred = output.data.max(1, keepdim=True)[1]
-        return pred
+        r = m[str(pred.item())]
+        return r
 
 
 def main():

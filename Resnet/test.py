@@ -1,10 +1,10 @@
-import torch
-import sys
-sys.path.append("/home/lu677/cs490/cs490-research/Resnet")
+from torchvision import models
+from torchsummary import summary
 
+from resenet_model import Net
 
-def test():
-    print(torch.cuda.is_available())
+model = Net(l=512)
+summary(model, (3, 48, 48))
 
-
-test()
+model = models.resnet18()
+summary(model, (3, 48, 48))
