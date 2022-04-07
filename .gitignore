@@ -242,3 +242,5 @@ TrainVal
 TrainVal.tar.gz
 *.out
 Resnet
+generated/jpgimages
+*.zip
